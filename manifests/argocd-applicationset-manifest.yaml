@@ -1,0 +1,34 @@
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: workload-helm-git
+  namespace: argocd
+spec:
+  goTemplate: true
+  goTemplateOptions: ["missingkey=error"]
+  generators:
+    - git:
+        repoURL: https://github.com/robinlioret/poc-iac-gitops-pulumi.git
+        revision: HEAD
+        files:
+          - path: workload/**/manifest.json
+  template:
+    metadata:
+      name: "{{ .path.basenameNormalized }}"
+      namespace: argocd
+    spec:
+      destination:
+        namespace: "{{ .dNamespace }}"
+        server: https://kubernetes.default.svc
+      project: default
+      source:
+        repoURL: "{{ .dRepoURL }}"
+        targetRevision: "{{ .dTargetRevision }}"
+        path: "{{ .dPath  }}/manifests"
+      syncPolicy:
+        automated:
+          prune: true
+          selfHeal: true
+        syncOptions:
+          - CreateNamespace=true
+          - ServerSideApply=true

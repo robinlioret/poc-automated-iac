@@ -1,0 +1,46 @@
+
+apiVersion: pulumi.com/v1
+kind: Stack
+metadata:
+  name: nginx-k8s-stack
+spec:
+  backend: "s3://rli-iac-states"
+#  secretsProvider: "awskms:///arn:aws:kms:eu-west-3::key/"
+  envRefs:
+    AWS_DEFAULT_REGION:
+      type: Literal
+      literal:
+        value: eu-west-3
+    AWS_ACCESS_KEY_ID:
+      type: Secret
+      secret:
+        name: pulumi-operator-aws
+        key: AWS_ACCESS_KEY_ID
+    AWS_SECRET_ACCESS_KEY:
+      type: Secret
+      secret:
+        name: pulumi-operator-aws
+        key: AWS_SECRET_ACCESS_KEY
+#    AWS_SESSION_TOKEN:
+#      type: Secret
+#      secret:
+#        name: pulumi-operator-aws
+#        key: AWS_SESSION_TOKEN
+  stack: "s3backend.nginx.dev"
+  projectRepo: https://github.com/pulumi/examples
+  repoDir: /kubernetes-ts-nginx
+  branch: "refs/heads/master"
+  destroyOnFinalize: true
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: iac:default:system:auth-delegator
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: system:auth-delegator
+subjects:
+  - kind: ServiceAccount
+    namespace: default
+    name: default

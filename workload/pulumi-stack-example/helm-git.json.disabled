@@ -1,0 +1,6 @@
+{
+  "dNamespace": "pulumi-stack-example",
+  "dRepoURL": "https://github.com/robinlioret/poc-iac-gitops-pulumi.git",
+  "dTargetRevision": "master",
+  "dChartPath": "charts/pulumi-stack-example"
+}

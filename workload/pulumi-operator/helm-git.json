@@ -1,0 +1,6 @@
+{
+  "dNamespace": "pulumi-operator",
+  "dRepoURL": "https://github.com/pulumi/pulumi-kubernetes-operator",
+  "dTargetRevision": "v2.0.0-beta.2",
+  "dChartPath": "deploy/helm/pulumi-operator"
+}
