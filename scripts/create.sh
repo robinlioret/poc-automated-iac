@@ -13,7 +13,7 @@ kind create cluster --config ./config/kind-cluster.yaml
 # Install ingress controller
 echo "Installing Nginx controller..."
 sleep 5
-kubectl apply -f ./manifests/nginx-controller.yaml
+kubectl apply --server-side -f ./manifests/nginx-controller.yaml
 echo "Nginx ingress controller installed. Waiting for the deployment to be up"
 sleep 10
 kubectl wait --namespace ingress-nginx \
@@ -44,7 +44,7 @@ echo "Nginx ingress controller deployed."
 # Install ArgoCD
 echo "Deploying ArgoCD..."
 kubectl create namespace argocd
-kubectl apply --namespace argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/refs/heads/master/manifests/install.yaml
+kubectl apply --server-side --namespace argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/refs/heads/master/manifests/install.yaml
 echo "Waiting for the server to be up and running..."
 sleep 10
 kubectl wait --namespace argocd \
@@ -56,7 +56,7 @@ echo "Updating host file"
 grep -v "argocd.rli-gitops-pulumi.local" /etc/hosts | sudo tee /etc/hosts > /dev/null
 echo -e "127.0.0.1\targocd.rli-gitops-pulumi.local" | sudo tee -a /etc/hosts > /dev/null
 echo "Deploying the ArgoCD ingress"
-kubectl apply -f ./manifests/argocd-ingress.yaml
+kubectl apply --server-side -f ./manifests/argocd-ingress.yaml
 sleep 5
 echo "Check argocd response"
 if curl -k https://argocd.rli-gitops-pulumi.local > /dev/null; then
@@ -68,6 +68,6 @@ fi
 echo "Storing ArgoCD admin password in a temp file"
 kubectl get secret --namespace argocd argocd-initial-admin-secret -o jsonpath='{.data.password}' | base64 -d > ./sensitive/argocd-password
 echo "Deploy ArgoCD application set and initialize gitops"
-kubectl apply --namespace argocd -f ./manifests/argocd-applicationset-helm-git.yaml
-kubectl apply --namespace argocd -f ./manifests/argocd-applicationset-helm-external.yaml
-kubectl apply --namespace argocd -f ./manifests/argocd-applicationset-manifest.yaml
+kubectl apply --server-side --namespace argocd -f ./manifests/argocd-applicationset-helm-git.yaml
+kubectl apply --server-side --namespace argocd -f ./manifests/argocd-applicationset-helm-external.yaml
+kubectl apply --server-side --namespace argocd -f ./manifests/argocd-applicationset-manifest.yaml
