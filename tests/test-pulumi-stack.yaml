@@ -7,6 +7,10 @@ spec:
   backend: "s3://rli-iac-states"
 #  secretsProvider: "awskms:///arn:aws:kms:eu-west-3::key/"
   envRefs:
+    PULUMI_CONFIG_PASSPHRASE:
+      type: Literal
+      literal:
+        value: yolo
     AWS_DEFAULT_REGION:
       type: Literal
       literal:
